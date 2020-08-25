@@ -1,0 +1,88 @@
+{
+	"index_patterns" : "syslog-*",
+	"settings" : {
+		"index.refresh_interval" : "5s",
+		"number_of_replicas" : 1
+	},
+	"mappings" : {
+		"jsgn" : {
+			"dynamic_templates" : [{
+						"text_fields" : {
+							"match_mapping_type" : "string",
+							"mapping" : {
+								"type" : "text",
+								"norms" : true,
+								"fields" : {
+									"raw" : {
+										"type" : "keyword",
+										"ignore_above" : 256
+									}
+								}
+							}
+						}
+					}],
+			"properties" : {
+				"devid" : {
+					"type" : "keyword"
+				},
+				"logtype" : {
+					"type" : "keyword"
+				},
+				"mod" : {
+					"type" : "keyword"
+				},
+				"dname" : {
+					"type" : "keyword"
+				},
+				"appname" : {
+					"type" : "keyword"
+				},
+				"apporgnname" : {
+					"type" : "keyword"
+				},
+				"network" : {
+					"type" : "keyword"
+				},
+				"date" : {
+					"type" : "date"
+				},
+				"leveledid" : {
+					"type" : "keyword"
+				},
+				"alarmcode" : {
+					"type" : "keyword"
+				},
+				"message" : {
+					"type" : "keyword"
+				},
+				"apptype" : {
+					"type" : "keyword"
+				},
+				"appsourcename" : {
+					"type" : "keyword"
+				},
+				"bfiltered" : {
+					"type" : "keyword"
+				},
+				"filename" : {
+					"type" : "keyword"
+				},
+				"event" : {
+					"type" : "keyword"
+				},
+				"overpass" : {
+					"type" : "keyword"
+				},
+				"unpassreason" : {
+					"type" : "keyword"
+				},
+				"filesize" : {
+					"type" : "long"
+				},
+                "bytes" : {
+                    "type" : "long"
+                }
+			}
+		}
+	}
+}
