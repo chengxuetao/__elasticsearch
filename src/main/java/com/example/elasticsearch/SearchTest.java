@@ -13,10 +13,9 @@ public class SearchTest extends BaseTest {
     public static void main(String[] args) throws Exception {
         init(null);
 
-        SearchRequest request = new SearchRequest("1ff5c96c450f442394e560767945bd6c**");
+        SearchRequest request = new SearchRequest("db403c7cf3d4437d9ebfa6ba2435e515*");
         SearchSourceBuilder source = new SearchSourceBuilder().size(10000).trackTotalHits(true);
         request.source(source);
-        request.scroll(TimeValue.timeValueMinutes(1));
         SearchResponse response = esSearch.searchByRequest(request);
         while (true) {
             for (SearchHit hit : response.getHits().getHits()) {

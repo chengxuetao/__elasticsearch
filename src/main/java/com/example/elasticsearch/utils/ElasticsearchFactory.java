@@ -1,8 +1,5 @@
 package com.example.elasticsearch.utils;
 
-import java.util.concurrent.TimeUnit;
-import java.util.function.BiConsumer;
-
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -23,6 +20,9 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
+
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
 public class ElasticsearchFactory {
 
@@ -119,21 +119,21 @@ public class ElasticsearchFactory {
 
             @Override
             public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-                if (response.hasFailures())
+                if (response.hasFailures()) {
                     System.out.println("Bulk [" + executionId + "] executed with failures, response = "
-                        + response.buildFailureMessage());
-                else {
+                            + response.buildFailureMessage());
+                } else {
                     System.out.println(
-                        "Bulk [" + executionId + "] completed in " + response.getTook().getMillis() + " milliseconds.");
+                            "Bulk [" + executionId + "] completed in " + response.getTook().getMillis() + " milliseconds.");
                 }
             }
         };
         BiConsumer<BulkRequest, ActionListener<BulkResponse>> consumer =
-            (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
+                (request, bulkListener) -> client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener);
         this.processor = BulkProcessor.builder(consumer, listener).setBulkActions(500)
-            .setBulkSize(new ByteSizeValue(5L, ByteSizeUnit.MB)).setConcurrentRequests(0)
-            .setFlushInterval(TimeValue.timeValueSeconds(1L))
-            .setBackoffPolicy(BackoffPolicy.constantBackoff(TimeValue.timeValueSeconds(1L), 3)).build();
+                .setBulkSize(new ByteSizeValue(5L, ByteSizeUnit.MB)).setConcurrentRequests(0)
+                .setFlushInterval(TimeValue.timeValueSeconds(1L))
+                .setBackoffPolicy(BackoffPolicy.constantBackoff(TimeValue.timeValueSeconds(1L), 3)).build();
     }
 
     public RestHighLevelClient getClient() {

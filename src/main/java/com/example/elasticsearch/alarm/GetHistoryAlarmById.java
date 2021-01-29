@@ -1,34 +1,25 @@
 package com.example.elasticsearch.alarm;
 
-import java.net.InetAddress;
-
-import org.elasticsearch.action.search.SearchRequestBuilder;
+import com.example.elasticsearch.utils.BaseTest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-public class GetHistoryAlarmById {
+public class GetHistoryAlarmById extends BaseTest {
     public static void main(String[] args) throws Exception {
+        init("172.16.3.198:9200");
         try {
-            // 设置集群名称
-            Settings settings = Settings.builder().put("cluster.name", "es-cluster").build();
-            // 创建client
-            TransportClient client = new PreBuiltTransportClient(settings);
-            client.addTransportAddress(new TransportAddress(InetAddress.getByName("172.16.3.198"), 9300));
+            BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery().must(QueryBuilders.termQuery("instId", "973a0f8fc801deca4611316ad44abcaf"));
+            SearchRequest request = new SearchRequest("alarm*");
+            SearchSourceBuilder source = new SearchSourceBuilder().size(1).trackTotalHits(true);
+            source.query(queryBuilder);
+            request.source(source);
 
-            BoolQueryBuilder queryBuilder =
-                QueryBuilders.boolQuery().must(QueryBuilders.termQuery("id.raw", "5b7e7390-af75-4e5d-87d1-ca9a840e3f2c"));
-
-            SearchRequestBuilder builder = client.prepareSearch("alarm-history*")
-                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setQuery(queryBuilder).setSize(1);
+            SearchResponse response = esSearch.searchByRequest(request);
             String result = null;
-            SearchResponse response = builder.get();
             if (response != null && response.getHits() != null) {
                 SearchHits hits = response.getHits();
                 if (hits.getHits().length > 0) {
@@ -39,7 +30,7 @@ public class GetHistoryAlarmById {
             System.out.println(result);
 
             // 关闭client
-            client.close();
+            factory.destroy();
         } catch (Exception e) {
             e.printStackTrace();
         }
