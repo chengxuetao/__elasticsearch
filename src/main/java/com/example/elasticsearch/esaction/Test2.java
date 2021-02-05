@@ -73,7 +73,7 @@ public class Test2 {
             try {
                 DeleteIndexRequest request = new DeleteIndexRequest(index);
                 client.indices().delete(request, RequestOptions.DEFAULT);
-            } catch (IOException e) {
+            } catch (Exception e) {
             }
 
             long start = System.currentTimeMillis();
@@ -138,10 +138,7 @@ public class Test2 {
     }
 
     public static void add(BulkProcessor processor, String index) {
-        for (int i = 1; i <= 50000; i++) {
-            if (i % 1000 == 0) {
-                System.out.println("write count " + i);
-            }
+        for (int i = 1; i <= 500000; i++) {
             IndexRequest request = new IndexRequest(index);
             Map<String, String> data = new HashMap<>();
             String uuid = UUID.randomUUID().toString();
@@ -160,6 +157,9 @@ public class Test2 {
             data.put("introduce", "不忘初衷，及时悔过，便永远不晚。也许，更多的时候，人生走出的是一条曲线，终点又回到起点，生命才是最圆满的吧。");
             request.source(data);
             processor.add(request);
+            if (i % 1000 == 0) {
+                System.err.println("Write count " + i);
+            }
         }
     }
 
